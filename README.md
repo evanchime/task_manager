@@ -8,6 +8,8 @@ A program for a small business to help it manage tasks assigned to each member o
 - Adds task
 - View all task
 - View a user's specific task
+- Display statistics
+- Generate reports
 
 ## Installation
 
