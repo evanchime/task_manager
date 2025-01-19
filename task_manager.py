@@ -11,6 +11,7 @@
 
 import os
 import re
+import argparse
 from datetime import datetime
 
 # ====Functions Section====
@@ -455,6 +456,27 @@ def display_stats():
     with open('user_overview.txt', 'r') as file:
         for line in file:
             print(line, end="")
+
+
+def parse_cli_args():
+    """ Parse the command line arguments.
+    Returns:
+        args: Command line arguments
+    """
+    parser = argparse.ArgumentParser(
+        description='Get arguments for the task manager script'
+    )
+    parser.add_argument(
+        '--users', type=str, help='Users file'
+    )
+    parser.add_argument(
+        '--tasks', type=str, help='Tasks file'
+    )
+    parser.add_argument(
+        '--user-overview', type=str, help='User overview file'
+    )
+
+    return parser.parse_args()
 
 
 # ====Login Section====
