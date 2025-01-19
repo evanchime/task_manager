@@ -1,14 +1,5 @@
 # =====importing libraries===========
 """This is the section where you will import libraries"""
-
-# After research I found out about the datetime module, it's type and
-# attributes. Also the strftime function that returns a string,
-# representing date and time and strptime function for parsing date and
-# time strings.
-#
-# I also learnt about the re module and the fullmatch function that
-# returns a match
-
 import os
 import re
 import argparse
@@ -18,8 +9,6 @@ from datetime import datetime
 """These function will be called to print the tasks in a user-friendly
 manner
 """
-
-
 def print_task(line, task_id=None):
     print("—" * 79, "\n")
     if task_id:  #  Print task ID if provided
