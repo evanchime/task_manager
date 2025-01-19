@@ -469,103 +469,107 @@ def parse_cli_args():
 
 
 # ====Login Section====
-"""Here you will write code that will allow a user to login.
-    - Your code must read usernames and password from the user.txt file
-    - You can use a list or dictionary to store a list of usernames and 
-    passwords from the file
-    - Use a while loop to validate your user name and password
-"""
-with open("user.txt", "r") as file:
-    users = {}
-    for line in file:
-        line = line.strip("\n").split(", ")
-        users[line[0]] = line[1]
+def main():
+    """Here you will write code that will allow a user to login.
+        - Your code must read usernames and password from the user.txt file
+        - You can use a list or dictionary to store a list of usernames and 
+        passwords from the file
+        - Use a while loop to validate your user name and password
+    """
+    with open("user.txt", "r") as file:
+        users = {}
+        for line in file:
+            line = line.strip("\n").split(", ")
+            users[line[0]] = line[1]
 
-while True:
-    username = input("Enter a username: ").lower()
-    if username in users:
-        password = input("Enter password: ")
-        while password != users[username]:
-            print("You've entered an invalid password")
-            password = input("Enter a valid password: ")
-        break
-    print("You've entered an invalid username")
-print("\nYou've successfully logged in")
+    while True:
+        username = input("Enter a username: ").lower()
+        if username in users:
+            password = input("Enter password: ")
+            while password != users[username]:
+                print("You've entered an invalid password")
+                password = input("Enter a valid password: ")
+            break
+        print("You've entered an invalid username")
+    print("\nYou've successfully logged in")
 
-while True:
-    # Present the menu to the user and
-    # make sure that the user input is converted to lower case.
-    # Only the user 'admin' is allowed to register users
-    print()
+    while True:
+        # Present the menu to the user and
+        # make sure that the user input is converted to lower case.
+        # Only the user 'admin' is allowed to register users
+        print()
 
-    if username == "admin":
-        menu = input("""Select one of the following options:
-r - register a user
-a - add task
-va - view all tasks
-vm - view my tasks
-gr - generate reports
-ds - display statistics
-e - exit
-: """).lower()
-    else:
-        menu = input("""Select one of the following options:
-a - add task
-va - view all tasks
-vm - view my tasks
-gr - generate reports
-e - exit
-: """).lower()
+        if username == "admin":
+            menu = input("""Select one of the following options:
+    r - register a user
+    a - add task
+    va - view all tasks
+    vm - view my tasks
+    gr - generate reports
+    ds - display statistics
+    e - exit
+    : """).lower()
+        else:
+            menu = input("""Select one of the following options:
+    a - add task
+    va - view all tasks
+    vm - view my tasks
+    gr - generate reports
+    e - exit
+    : """).lower()
 
-    print()
+        print()
 
-    if menu == "r":
-        pass
-        reg_user(users)  #  Register a new user
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        if menu == "r":
             pass
+            reg_user(users)  #  Register a new user
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "a":
-        pass
-        add_task(users)  #  Add a new task
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "a":
             pass
+            add_task(users)  #  Add a new task
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "va":
-        pass
-        view_all()  #  View all the tasks listed in 'tasks.txt'
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "va":
             pass
+            view_all()  #  View all the tasks listed in 'tasks.txt'
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "vm":
-        pass
-        view_mine(username) #  View tasks assigned to the logged in user
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "vm":
             pass
+            view_mine(username) #  View tasks assigned to the logged in user
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "gr":
-        pass
-        generate_reports(users) #  Generate reports
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "gr":
             pass
+            generate_reports(users) #  Generate reports
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "ds":
-        pass
-        display_stats()
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "ds":
             pass
+            display_stats()
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "e":
-        print("Goodbye!!!")
-        exit()
+        elif menu == "e":
+            print("Goodbye!!!")
+            exit()
 
-    else:
-        print("You have entered an invalid input. Please try again")
+        else:
+            print("You have entered an invalid input. Please try again")
 
-# ====End of Code====
+    # ====End of Code====
+    
+if __main__ == '__main__':
+    main()
