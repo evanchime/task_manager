@@ -420,7 +420,7 @@ def generate_reports(users):
     print("Done") # Notify the user that the reports have been generated
 
 
-def display_stats():
+def display_stats(users):
 
     '''The admin user is provided with a new menu option that allows
     them to display statistics. When this menu option is selected, 
@@ -557,7 +557,7 @@ def main():
 
         elif menu == "ds":
             pass
-            display_stats()
+            display_stats(users)
             user_input = input("\nPress enter to return to the main menu: ")
             if user_input:
                 pass
