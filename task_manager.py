@@ -2,6 +2,7 @@
 """This is the section where you will import libraries"""
 import os
 import re
+import sys
 import argparse
 from datetime import datetime
 
@@ -286,17 +287,18 @@ or 'edit'"
                         print("\nTask updated successfully")
     
 
-def generate_reports(users):
+def generate_reports(users, args):
     """When the user chooses to generate reports, two text files, called
-    task_overview.txt and user_overview.txt, should be generated. Both
-    these text files should output data in a user-friendly, easy to read
-    manner
+    task_overview.txt and user_overview.txt, should be generated, if no 
+    alternative files are provided in the command line. Both these text 
+    files should output data in a user-friendly, easy to read manner
+
     task_overview.txt should contain:
         - The total number of tasks that have been generated and
         tracked using the task_manager.py.
         - The total number of completed tasks.
         - The total number of uncompleted tasks.
-        - The total number of tasks that haven’t been completed and
+        - The total number of tasks that haven't been completed and
         that are overdue.
         - The percentage of tasks that are incomplete.
         - The percentage of tasks that are overdue.
@@ -330,7 +332,9 @@ def generate_reports(users):
     percentage_uncompleted = 0  #  Percentage of tasks uncompleted
     percentage_overdue = 0  #  Percentage of tasks that are overdue
 
-    with open("tasks.txt", "r") as file:
+    if not args.tasks or not os.path.exists(args.tasks): 
+        sys.exit("Please provide a valid tasks file")
+    with open(args.tasks, "r") as file:
         for line in file:
             total_tasks += 1
             line = line.strip("\n").split(", ")
@@ -354,7 +358,11 @@ def generate_reports(users):
     percentage_overdue = (total_overdue / total_tasks) * 100
 
     # Generate a report of the task overview
-    with open("task_overview.txt", "w+") as file:
+    if args.task_overview:
+        task_overview = args.task_overview
+    else:
+        task_overview = "task_overview.txt"
+    with open(task_overview, "w+") as file:
         file.write(f"{'—' * 79}\n")
         file.write(f"Total tasks:{' '*21}{total_tasks}\n")
         file.write(f"Total completed:{' '*17}{total_completed}\n")
@@ -368,8 +376,12 @@ def generate_reports(users):
         ) #  To the nearest whole number
         file.write("—" * 79)
 
-    # Generate a report of user overview and write to user_overview.txt
-    with open("user_overview.txt", "w+") as file:
+    # Generate a report of user overview
+    if args.user_overview:
+        user_overview = args.user_overview
+    else:
+        user_overview = "user_overview.txt"
+    with open(user_overview, "w+") as file:
         user_found = False  # Flag to check if tasks.txt is empty
 
         file.write(f"{'—' * 79}\n")
@@ -479,11 +491,15 @@ def main():
         passwords from the file
         - Use a while loop to validate your user name and password
     """
-    with open("user.txt", "r") as file:
-        users = {}
-        for line in file:
-            line = line.strip("\n").split(", ")
-            users[line[0]] = line[1]
+    args = parse_cli_args()
+    users = {}
+    if args.users:
+        with open(args.users, "r") as file:
+            for line in file:
+                line = line.strip("\n").split(", ")
+                users[line[0]] = line[1]
+    else:
+        sys.exit("Please provide a users file")
 
     while True:
         username = input("Enter a username: ").lower()
