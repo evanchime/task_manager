@@ -464,6 +464,9 @@ def parse_cli_args():
     parser.add_argument(
         '--user-overview', type=str, help='User overview file'
     )
+    parser.add_argument(
+        '--task-overview', type=str, help='Task overview file'
+    )
 
     return parser.parse_args()
 
@@ -571,5 +574,5 @@ def main():
 
     # ====End of Code====
     
-if __main__ == '__main__':
+if __name__ == '__main__':
     main()
