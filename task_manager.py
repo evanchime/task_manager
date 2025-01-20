@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import argparse
+import getpass
 from datetime import datetime
 
 # ====Functions Section====
@@ -40,12 +41,16 @@ def reg_user(users, args):
     while new_username in users:
         print("Username already exists")
         new_username = input("Enter a new username: ").lower()
-    password = input("Enter password: ")
-    password_confirmation = input("Enter password again to confirm: ")
+    password = getpass.getpass("Enter password: ")
+    password_confirmation = getpass.getpass(
+        "Enter password again to confirm: "
+    )
     while password != password_confirmation:
         print("Passwords don't match")
-        password = input("Enter password: ")
-        password_confirmation = input("Enter password again to confirm: ")
+        password = getpass.getpass("Enter password: ")
+        password_confirmation = getpass.getpass(
+            "Enter password again to confirm: "
+        )
 
     with open(args.users, "a") as file:
         file.write(f"\n{new_username}, {password}")
@@ -511,10 +516,10 @@ def main():
     while True:
         username = input("Enter a username: ").lower()
         if username in users:
-            password = input("Enter password: ")
+            password = getpass.getpass("Enter password: ")
             while password != users[username]:
                 print("You've entered an invalid password")
-                password = input("Enter a valid password: ")
+                password = getpass.getpass("Enter a valid password: ")
             break
         print("You've entered an invalid username")
     print("\nYou've successfully logged in")
