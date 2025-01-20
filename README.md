@@ -33,7 +33,7 @@ A program for a small business to help it manage tasks assigned to each member o
 1. Run the main script:
 
     ```bash
-    python task_manager.py
+    python3 task_manager.py --tasks 'path_to_tasks_file' --users 'path_to users_file' [--task-overview 'path_to task_overview_file'] [--user-overview 'path_to user_overview_file']
     ```
 
 2. Follow the on-screen instructions to select the desired option.
