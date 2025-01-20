@@ -432,7 +432,7 @@ def generate_reports(users, args):
     print("Done") # Notify the user that the reports have been generated
 
 
-def display_stats(users):
+def display_stats(users, args):
 
     '''The admin user is provided with a new menu option that allows
     them to display statistics. When this menu option is selected, 
@@ -444,17 +444,26 @@ def display_stats(users):
     '''
     pass
 
-    if not os.path.exists('task_overview.txt'):
-        generate_reports(users)
+    if args.task_overview:
+        task_overview = args.task_overview
+    else:
+        task_overview = "task_overview.txt"
+
+    if not os.path.exists(task_overview):
+        generate_reports(users, args)
         print()  # Make console output more readable
     
-    with open('task_overview.txt', 'r') as file:
+    with open(task_overview, 'r') as file:
         for line in file:
             print(line, end="")
 
     print() # Make console output more readable
         
-    with open('user_overview.txt', 'r') as file:
+    if args.user_overview:
+        user_overview = args.user_overview
+    else:
+        user_overview = "user_overview.txt"
+    with open(user_overview, 'r') as file:
         for line in file:
             print(line, end="")
 
@@ -569,14 +578,14 @@ def main():
 
         elif menu == "gr":
             pass
-            generate_reports(users) #  Generate reports
+            generate_reports(users, args) #  Generate reports
             user_input = input("\nPress enter to return to the main menu: ")
             if user_input:
                 pass
 
         elif menu == "ds":
             pass
-            display_stats(users)
+            display_stats(users, args)
             user_input = input("\nPress enter to return to the main menu: ")
             if user_input:
                 pass
