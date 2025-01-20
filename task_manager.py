@@ -18,7 +18,7 @@ def print_task(line, task_id=None):
     print(f"Assigned to:\t\t{line[0]}")
     print(f"Date assigned:\t\t{line[3]}")
     print(f"Due date:\t\t{line[4]}")
-    print("Task Complete?:\t\tNo")
+    print(f"Task Complete?:\t\t{line[-1]}")
     print(f"Task Description:\n {line[2]}\n")
 
 
