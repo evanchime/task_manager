@@ -35,7 +35,7 @@ be registered and stores their details in the user.txt file as follows:
 """
 
 
-def reg_user(users):
+def reg_user(users, args):
     print("Welcome to the registration process!\n")
     new_username = input("Enter a new username: ").lower()
     while new_username in users:
@@ -138,8 +138,8 @@ def view_all():
             print("No tasks found")
 
 
-def view_mine(username):
-    """This function will read the task from task.txt file and
+def view_mine(username, users, args):
+    """This function will read the task from args.tasks file and
     print to the console in a user-friendly manner.
     You can do it in this way:
         - Read a line from the file
@@ -164,7 +164,7 @@ def view_mine(username):
     """
     tasks = []  #  Task list
 
-    with open("tasks.txt", "r") as file:
+    with open(args.tasks, "r") as file:
         username_found = False  # Handle if no task assigned to user
 
         for line in file:
@@ -279,10 +279,10 @@ or 'edit'"
                     # Add '\n' if task is not the last task in tasks.txt
                     task += "\n"
 
-                # Write the updated task to tasks.txt
+                # Write the updated task to args.tasks
                 if tasks[int(task_id) - 1]  != task: 
                     tasks[int(task_id) - 1] = task
-                    with open("tasks.txt", "w") as file:
+                    with open(args.tasks, "w") as file:
                         file.writelines(tasks)
                         print("\nTask updated successfully")
     
@@ -571,7 +571,8 @@ def main():
 
         elif menu == "vm":
             pass
-            view_mine(username) #  View tasks assigned to the logged in user
+            #  View tasks assigned to the logged in user
+            view_mine(username, users, args) 
             user_input = input("\nPress enter to return to the main menu: ")
             if user_input:
                 pass
