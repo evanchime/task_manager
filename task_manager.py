@@ -55,8 +55,8 @@ def reg_user(users, args):
     print("\nUser added successfully")
 
 
-def add_task(users):
-    """This function will allow a user to add a new task to task.txt
+def add_task(users, args):
+    """This function will allow a user to add a new task args.tasks
     file as follows:
         - Prompt a user for the following:
             - the username of the person whom the task is assigned
@@ -65,7 +65,7 @@ def add_task(users):
             - the description of the task, and
             - the due date of the task.
         - Then, get the current date.
-        - Add the data to the file task.txt
+        - Add the data to the file args.tasks
         - Remember to include 'No' to indicate that the task is not
         complete.
 
@@ -102,7 +102,7 @@ format 'dd-mm-yyyy' e.g 20-10-2019: "
         due_date = datetime.strptime(due_date, "%d-%m-%Y").strftime("%d %b %Y")
         today = datetime.now().strftime("%d %b %Y")
 
-        with open("tasks.txt", "a+") as file:
+        with open(args.tasks, "a+") as file:
             file.seek(0, 0)
             tasks = file.readlines()
             file.seek(0, 2)
