@@ -1,24 +1,15 @@
 # =====importing libraries===========
 """This is the section where you will import libraries"""
-
-# After research I found out about the datetime module, it's type and
-# attributes. Also the strftime function that returns a string,
-# representing date and time and strptime function for parsing date and
-# time strings.
-#
-# I also learnt about the re module and the fullmatch function that
-# returns a match
-
 import os
 import re
+import sys
+import argparse
 from datetime import datetime
 
 # ====Functions Section====
 """These function will be called to print the tasks in a user-friendly
 manner
 """
-
-
 def print_task(line, task_id=None):
     print("—" * 79, "\n")
     if task_id:  #  Print task ID if provided
@@ -27,24 +18,23 @@ def print_task(line, task_id=None):
     print(f"Assigned to:\t\t{line[0]}")
     print(f"Date assigned:\t\t{line[3]}")
     print(f"Due date:\t\t{line[4]}")
-    print("Task Complete?:\t\tNo")
+    print(f"Task Complete?:\t\t{line[-1]}")
     print(f"Task Description:\n {line[2]}\n")
 
 
-"""This function contains the registration process. It allows users to 
-be registered and stores their details in the user.txt file as follows:
-    - Request input of a new username
-    - Check if the username already exists
-    - Request input of a new password
-    - Request input of password confirmation.
-    - Check if the new password and confirmed password are the 
-    same
-    - If they are the same, add them to the user.txt file,
-        otherwise present a relevant message
-"""
-
-
-def reg_user(users):
+def reg_user(users, args):
+    """This function contains the registration process. It allows users 
+    to be registered and stores their details in the user.txt file as 
+    follows:
+        - Request input of a new username
+        - Check if the username already exists
+        - Request input of a new password
+        - Request input of password confirmation.
+        - Check if the new password and confirmed password are the 
+        same
+        - If they are the same, add them to the user.txt file,
+            otherwise present a relevant message
+    """
     print("Welcome to the registration process!\n")
     new_username = input("Enter a new username: ").lower()
     while new_username in users:
@@ -57,7 +47,7 @@ def reg_user(users):
         password = input("Enter password: ")
         password_confirmation = input("Enter password again to confirm: ")
 
-    with open("user.txt", "a") as file:
+    with open(args.users, "a") as file:
         file.write(f"\n{new_username}, {password}")
 
     users[new_username] = password  #  Update users
@@ -65,8 +55,8 @@ def reg_user(users):
     print("\nUser added successfully")
 
 
-def add_task(users):
-    """This function will allow a user to add a new task to task.txt
+def add_task(users, args):
+    """This function will allow a user to add a new task args.tasks
     file as follows:
         - Prompt a user for the following:
             - the username of the person whom the task is assigned
@@ -75,7 +65,7 @@ def add_task(users):
             - the description of the task, and
             - the due date of the task.
         - Then, get the current date.
-        - Add the data to the file task.txt
+        - Add the data to the file args.tasks
         - Remember to include 'No' to indicate that the task is not
         complete.
 
@@ -112,7 +102,7 @@ format 'dd-mm-yyyy' e.g 20-10-2019: "
         due_date = datetime.strptime(due_date, "%d-%m-%Y").strftime("%d %b %Y")
         today = datetime.now().strftime("%d %b %Y")
 
-        with open("tasks.txt", "a+") as file:
+        with open(args.tasks, "a+") as file:
             file.seek(0, 0)
             tasks = file.readlines()
             file.seek(0, 2)
@@ -125,15 +115,15 @@ format 'dd-mm-yyyy' e.g 20-10-2019: "
         print("\nUser does not exist")
 
 
-def view_all():
-    """This function will read the tasks from tasks.txt file and
+def view_all(args):
+    """This function will read the tasks from args.tasks file and
     print to the console in a user-friendly manner.
     You can do it in this way:
         - Read a line from the file.
         - Split that line where there is comma and space.
         - Then print the results in a user-friendly manner.
     """
-    with open("tasks.txt", "r") as file:
+    with open(args.tasks, "r") as file:
         task_found = False  # Handle case of no task found
 
         for line in file:
@@ -147,8 +137,8 @@ def view_all():
             print("No tasks found")
 
 
-def view_mine(username):
-    """This function will read the task from task.txt file and
+def view_mine(username, users, args):
+    """This function will read the task from args.tasks file and
     print to the console in a user-friendly manner.
     You can do it in this way:
         - Read a line from the file
@@ -173,7 +163,7 @@ def view_mine(username):
     """
     tasks = []  #  Task list
 
-    with open("tasks.txt", "r") as file:
+    with open(args.tasks, "r") as file:
         username_found = False  # Handle if no task assigned to user
 
         for line in file:
@@ -288,25 +278,26 @@ or 'edit'"
                     # Add '\n' if task is not the last task in tasks.txt
                     task += "\n"
 
-                # Write the updated task to tasks.txt
+                # Write the updated task to args.tasks
                 if tasks[int(task_id) - 1]  != task: 
                     tasks[int(task_id) - 1] = task
-                    with open("tasks.txt", "w") as file:
+                    with open(args.tasks, "w") as file:
                         file.writelines(tasks)
                         print("\nTask updated successfully")
     
 
-def generate_reports(users):
+def generate_reports(users, args):
     """When the user chooses to generate reports, two text files, called
-    task_overview.txt and user_overview.txt, should be generated. Both
-    these text files should output data in a user-friendly, easy to read
-    manner
+    task_overview.txt and user_overview.txt, should be generated, if no 
+    alternative files are provided in the command line. Both these text 
+    files should output data in a user-friendly, easy to read manner
+
     task_overview.txt should contain:
         - The total number of tasks that have been generated and
         tracked using the task_manager.py.
         - The total number of completed tasks.
         - The total number of uncompleted tasks.
-        - The total number of tasks that haven’t been completed and
+        - The total number of tasks that haven't been completed and
         that are overdue.
         - The percentage of tasks that are incomplete.
         - The percentage of tasks that are overdue.
@@ -340,7 +331,9 @@ def generate_reports(users):
     percentage_uncompleted = 0  #  Percentage of tasks uncompleted
     percentage_overdue = 0  #  Percentage of tasks that are overdue
 
-    with open("tasks.txt", "r") as file:
+    if not args.tasks or not os.path.exists(args.tasks): 
+        sys.exit("Please provide a valid tasks file")
+    with open(args.tasks, "r") as file:
         for line in file:
             total_tasks += 1
             line = line.strip("\n").split(", ")
@@ -364,7 +357,11 @@ def generate_reports(users):
     percentage_overdue = (total_overdue / total_tasks) * 100
 
     # Generate a report of the task overview
-    with open("task_overview.txt", "w+") as file:
+    if args.task_overview:
+        task_overview = args.task_overview
+    else:
+        task_overview = "task_overview.txt"
+    with open(task_overview, "w+") as file:
         file.write(f"{'—' * 79}\n")
         file.write(f"Total tasks:{' '*21}{total_tasks}\n")
         file.write(f"Total completed:{' '*17}{total_completed}\n")
@@ -378,8 +375,12 @@ def generate_reports(users):
         ) #  To the nearest whole number
         file.write("—" * 79)
 
-    # Generate a report of user overview and write to user_overview.txt
-    with open("user_overview.txt", "w+") as file:
+    # Generate a report of user overview
+    if args.user_overview:
+        user_overview = args.user_overview
+    else:
+        user_overview = "user_overview.txt"
+    with open(user_overview, "w+") as file:
         user_found = False  # Flag to check if tasks.txt is empty
 
         file.write(f"{'—' * 79}\n")
@@ -430,131 +431,172 @@ def generate_reports(users):
     print("Done") # Notify the user that the reports have been generated
 
 
-def display_stats():
-
+def display_stats(users, args):
     '''The admin user is provided with a new menu option that allows
     them to display statistics. When this menu option is selected, 
     these statistics should be displayed in a user-friendly manner,
-    from task_overview.txt and user_overview.txt. If these files do
-    not exist, they should be generated before the statistics are
-    displayed.  Prompt the user to press enter to return to the main 
-    menu
+    from task_overview.txt and user_overview.txt or any alternative 
+    files provided in the command line. If these files do not exist, 
+    they should be generated before the statistics are displayed.  
+    Prompt the user to press enter to return to the main menu
     '''
     pass
 
-    if not os.path.exists('task_overview.txt'):
-        generate_reports(users)
+    if args.task_overview:
+        task_overview = args.task_overview
+    else:
+        task_overview = "task_overview.txt"
+
+    if not os.path.exists(task_overview):
+        generate_reports(users, args)
         print()  # Make console output more readable
     
-    with open('task_overview.txt', 'r') as file:
+    with open(task_overview, 'r') as file:
         for line in file:
             print(line, end="")
 
     print() # Make console output more readable
         
-    with open('user_overview.txt', 'r') as file:
+    if args.user_overview:
+        user_overview = args.user_overview
+    else:
+        user_overview = "user_overview.txt"
+    with open(user_overview, 'r') as file:
         for line in file:
             print(line, end="")
 
 
+def parse_cli_args():
+    """ Parse the command line arguments.
+    Returns:
+        args: Command line arguments
+    """
+    parser = argparse.ArgumentParser(
+        description='Get arguments for the task manager script'
+    )
+    parser.add_argument(
+        '--users', type=str, help='Users file'
+    )
+    parser.add_argument(
+        '--tasks', type=str, help='Tasks file'
+    )
+    parser.add_argument(
+        '--user-overview', type=str, help='User overview file'
+    )
+    parser.add_argument(
+        '--task-overview', type=str, help='Task overview file'
+    )
+
+    return parser.parse_args()
+
+
 # ====Login Section====
-"""Here you will write code that will allow a user to login.
-    - Your code must read usernames and password from the user.txt file
-    - You can use a list or dictionary to store a list of usernames and 
-    passwords from the file
-    - Use a while loop to validate your user name and password
-"""
-with open("user.txt", "r") as file:
+def main():
+    """Here you will write code that will allow a user to login.
+        - Your code must read usernames and password from the user.txt file
+        - You can use a list or dictionary to store a list of usernames and 
+        passwords from the file
+        - Use a while loop to validate your user name and password
+    """
+    args = parse_cli_args()
     users = {}
-    for line in file:
-        line = line.strip("\n").split(", ")
-        users[line[0]] = line[1]
-
-while True:
-    username = input("Enter a username: ").lower()
-    if username in users:
-        password = input("Enter password: ")
-        while password != users[username]:
-            print("You've entered an invalid password")
-            password = input("Enter a valid password: ")
-        break
-    print("You've entered an invalid username")
-print("\nYou've successfully logged in")
-
-while True:
-    # Present the menu to the user and
-    # make sure that the user input is converted to lower case.
-    # Only the user 'admin' is allowed to register users
-    print()
-
-    if username == "admin":
-        menu = input("""Select one of the following options:
-r - register a user
-a - add task
-va - view all tasks
-vm - view my tasks
-gr - generate reports
-ds - display statistics
-e - exit
-: """).lower()
+    if args.users:
+        with open(args.users, "r") as file:
+            for line in file:
+                line = line.strip("\n").split(", ")
+                users[line[0]] = line[1]
     else:
-        menu = input("""Select one of the following options:
-a - add task
-va - view all tasks
-vm - view my tasks
-gr - generate reports
-e - exit
-: """).lower()
+        sys.exit("Please provide a users file")
 
-    print()
+    while True:
+        username = input("Enter a username: ").lower()
+        if username in users:
+            password = input("Enter password: ")
+            while password != users[username]:
+                print("You've entered an invalid password")
+                password = input("Enter a valid password: ")
+            break
+        print("You've entered an invalid username")
+    print("\nYou've successfully logged in")
 
-    if menu == "r":
-        pass
-        reg_user(users)  #  Register a new user
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+    while True:
+        # Present the menu to the user and
+        # make sure that the user input is converted to lower case.
+        # Only the user 'admin' is allowed to register users
+        print()
+
+        if username == "admin":
+            menu = input("""Select one of the following options:
+    r - register a user
+    a - add task
+    va - view all tasks
+    vm - view my tasks
+    gr - generate reports
+    ds - display statistics
+    e - exit
+    : """).lower()
+        else:
+            menu = input("""Select one of the following options:
+    a - add task
+    va - view all tasks
+    vm - view my tasks
+    gr - generate reports
+    e - exit
+    : """).lower()
+
+        print()
+
+        if menu == "r":
             pass
+            reg_user(users, args)  #  Register a new user
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "a":
-        pass
-        add_task(users)  #  Add a new task
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "a":
             pass
+            add_task(users, args)  #  Add a new task
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "va":
-        pass
-        view_all()  #  View all the tasks listed in 'tasks.txt'
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "va":
             pass
+            view_all(args)  #  View all the tasks listed in 'tasks.txt'
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "vm":
-        pass
-        view_mine(username) #  View tasks assigned to the logged in user
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "vm":
             pass
+            #  View tasks assigned to the logged in user
+            view_mine(username, users, args) 
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "gr":
-        pass
-        generate_reports(users) #  Generate reports
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "gr":
             pass
+            generate_reports(users, args) #  Generate reports
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "ds":
-        pass
-        display_stats()
-        user_input = input("\nPress enter to return to the main menu: ")
-        if user_input:
+        elif menu == "ds":
             pass
+            display_stats(users, args)
+            user_input = input("\nPress enter to return to the main menu: ")
+            if user_input:
+                pass
 
-    elif menu == "e":
-        print("Goodbye!!!")
-        exit()
+        elif menu == "e":
+            print("Goodbye!!!")
+            exit()
 
-    else:
-        print("You have entered an invalid input. Please try again")
+        else:
+            print("You have entered an invalid input. Please try again")
 
-# ====End of Code====
+    # ====End of Code====
+    
+if __name__ == '__main__':
+    main()
