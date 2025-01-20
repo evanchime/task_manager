@@ -115,15 +115,15 @@ format 'dd-mm-yyyy' e.g 20-10-2019: "
         print("\nUser does not exist")
 
 
-def view_all():
-    """This function will read the tasks from tasks.txt file and
+def view_all(args):
+    """This function will read the tasks from args.tasks file and
     print to the console in a user-friendly manner.
     You can do it in this way:
         - Read a line from the file.
         - Split that line where there is comma and space.
         - Then print the results in a user-friendly manner.
     """
-    with open("tasks.txt", "r") as file:
+    with open(args.tasks, "r") as file:
         task_found = False  # Handle case of no task found
 
         for line in file:
