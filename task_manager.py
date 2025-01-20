@@ -22,20 +22,19 @@ def print_task(line, task_id=None):
     print(f"Task Description:\n {line[2]}\n")
 
 
-"""This function contains the registration process. It allows users to 
-be registered and stores their details in the user.txt file as follows:
-    - Request input of a new username
-    - Check if the username already exists
-    - Request input of a new password
-    - Request input of password confirmation.
-    - Check if the new password and confirmed password are the 
-    same
-    - If they are the same, add them to the user.txt file,
-        otherwise present a relevant message
-"""
-
-
 def reg_user(users, args):
+    """This function contains the registration process. It allows users 
+    to be registered and stores their details in the user.txt file as 
+    follows:
+        - Request input of a new username
+        - Check if the username already exists
+        - Request input of a new password
+        - Request input of password confirmation.
+        - Check if the new password and confirmed password are the 
+        same
+        - If they are the same, add them to the user.txt file,
+            otherwise present a relevant message
+    """
     print("Welcome to the registration process!\n")
     new_username = input("Enter a new username: ").lower()
     while new_username in users:
@@ -48,7 +47,7 @@ def reg_user(users, args):
         password = input("Enter password: ")
         password_confirmation = input("Enter password again to confirm: ")
 
-    with open("user.txt", "a") as file:
+    with open(args.users, "a") as file:
         file.write(f"\n{new_username}, {password}")
 
     users[new_username] = password  #  Update users
