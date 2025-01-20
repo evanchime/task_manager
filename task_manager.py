@@ -432,14 +432,13 @@ def generate_reports(users, args):
 
 
 def display_stats(users, args):
-
     '''The admin user is provided with a new menu option that allows
     them to display statistics. When this menu option is selected, 
     these statistics should be displayed in a user-friendly manner,
-    from task_overview.txt and user_overview.txt. If these files do
-    not exist, they should be generated before the statistics are
-    displayed.  Prompt the user to press enter to return to the main 
-    menu
+    from task_overview.txt and user_overview.txt or any alternative 
+    files provided in the command line. If these files do not exist, 
+    they should be generated before the statistics are displayed.  
+    Prompt the user to press enter to return to the main menu
     '''
     pass
 
@@ -549,21 +548,21 @@ def main():
 
         if menu == "r":
             pass
-            reg_user(users)  #  Register a new user
+            reg_user(users, args)  #  Register a new user
             user_input = input("\nPress enter to return to the main menu: ")
             if user_input:
                 pass
 
         elif menu == "a":
             pass
-            add_task(users)  #  Add a new task
+            add_task(users, args)  #  Add a new task
             user_input = input("\nPress enter to return to the main menu: ")
             if user_input:
                 pass
 
         elif menu == "va":
             pass
-            view_all()  #  View all the tasks listed in 'tasks.txt'
+            view_all(args)  #  View all the tasks listed in 'tasks.txt'
             user_input = input("\nPress enter to return to the main menu: ")
             if user_input:
                 pass
