@@ -1,3 +1,0 @@
-admin, Register Users with task_manager.py, Use task_manager.py to add the usernames and passwords for all team members that will be using this program., 10 Oct 2019, 20 Oct 2019, Yes
-admin, Assign initial tasks, Use task_manager.py to assign each team member with appropriate tasks, 10 Oct 2019, 25 Oct 2019, Yes
-obi, obi goes to school, obi will be going to school, 20 Jan 2025, 18 Feb 2025, No
