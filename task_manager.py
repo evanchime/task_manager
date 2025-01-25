@@ -91,8 +91,16 @@ task is assigned to: "
     if task_username in users:
         title = input("Enter the title of the task: ").strip()
         title = re.sub(r" +", " ", title)
+        # If comma in title, then surround with single quote
+        title = f"'{title}'" if re.fullmatch(r".*,.*", title) else title
         description = input("Enter the description of the task: ").strip()
         description = re.sub(r" +", " ", description)
+        # If comma in description, then surround with single quote
+        description = (
+            f"'{description}'" 
+            if re.fullmatch(r".*,.*", description) 
+            else description
+        )
         due_date = input(
             "Enter the due_date of the task in this format \
 'dd-mm-yyyy' e.g 20-10-2019: "
