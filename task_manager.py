@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+import csv
 import argparse
 import getpass
 from datetime import datetime
@@ -90,8 +91,16 @@ task is assigned to: "
     if task_username in users:
         title = input("Enter the title of the task: ").strip()
         title = re.sub(r" +", " ", title)
+        # If comma in title, then surround with single quote
+        title = f"'{title}'" if re.fullmatch(r".*,.*", title) else title
         description = input("Enter the description of the task: ").strip()
         description = re.sub(r" +", " ", description)
+        # If comma in description, then surround with single quote
+        description = (
+            f"'{description}'" 
+            if re.fullmatch(r".*,.*", description) 
+            else description
+        )
         due_date = input(
             "Enter the due_date of the task in this format \
 'dd-mm-yyyy' e.g 20-10-2019: "
@@ -111,8 +120,10 @@ format 'dd-mm-yyyy' e.g 20-10-2019: "
             file.seek(0, 0)
             tasks = file.readlines()
             file.seek(0, 2)
-            task = f"{task_username}, \
-{title}, {description}, {today}, {due_date}, No"
+            task = (
+                f"{task_username},{title},{description},{today},"
+                f"{due_date},No"
+            )
             if task not in tasks:
                 file.write("\n" + task)
                 print("\nTask added successfully")
@@ -131,10 +142,10 @@ def view_all(args):
     with open(args.tasks, "r") as file:
         task_found = False  # Handle case of no task found
 
-        for line in file:
+        reader = csv.reader(file, delimiter=',', quotechar="'")
+        for record in reader:
             task_found = True
-            line = line.split(", ")
-            print_task(line)  #  Print in a user-friendly manner
+            print_task(record)  #  Print in a user-friendly manner
 
         if task_found:
             print("—" * 79)
@@ -171,14 +182,15 @@ def view_mine(username, users, args):
     with open(args.tasks, "r") as file:
         username_found = False  # Handle if no task assigned to user
 
-        for line in file:
-            tasks.append(line)
-            line = line.split(", ")
-            if line[0] == username:
+        reader = csv.reader(file, delimiter=',', quotechar="'")
+        for record in reader:
+            # Convert record to string, before appending to tasks 
+            tasks.append((',').join(record))
+            if record[0].strip("'") == username:
                 username_found = True
-
+            
                 # Print in a user-friendly manner, with task ID
-                print_task(line, len(tasks))
+                print_task(record, len(tasks))
 
         if username_found:
             print("—" * 79)
@@ -199,7 +211,6 @@ return to the main menu: "
             and int(task_id) <= len(tasks)
         ):
             task = tasks[int(task_id) - 1] #  Task the user will edit
-            task = task.strip("\n").split(", ")
             if task[5] == "Yes":  #  Check if the task is completed
                 print("\nYou can't edit a completed task")
             else:
@@ -277,17 +288,15 @@ the task in this format 'dd-mm-yyyy' e.g 20-10-2019: "
 or 'edit'"
                     )
 
-                task = ", ".join(task)
-
-                if int(task_id) != len(tasks):
-                    # Add '\n' if task is not the last task in tasks.txt
-                    task += "\n"
+                task = ",".join(task)
 
                 # Write the updated task to args.tasks
                 if tasks[int(task_id) - 1]  != task: 
                     tasks[int(task_id) - 1] = task
                     with open(args.tasks, "w") as file:
-                        file.writelines(tasks)
+                        # Join the list of tasks into a single string, 
+                        # with each task on a new line and write to file
+                        file.writelines(('\n').join(tasks))
                         print("\nTask updated successfully")
     
 
@@ -339,9 +348,9 @@ def generate_reports(users, args):
     if not args.tasks or not os.path.exists(args.tasks): 
         sys.exit("Please provide a valid tasks file")
     with open(args.tasks, "r") as file:
-        for line in file:
+        reader = csv.reader(file, delimiter=',', quotechar="'")
+        for line in reader:
             total_tasks += 1
-            line = line.strip("\n").split(", ")
             users_stat[line[0]][0] += 1  #  Tasks assigned to user
 
             if line[-1] == "Yes":
@@ -507,9 +516,9 @@ def main():
     users = {}
     if args.users:
         with open(args.users, "r") as file:
-            for line in file:
-                line = line.strip("\n").split(", ")
-                users[line[0]] = line[1]
+            reader = csv.reader(file, delimiter=',', quotechar="'")
+            for record in reader:
+                users[record[0].strip("'")] = record[1].strip("'")
     else:
         sys.exit("Please provide a users file")
 
