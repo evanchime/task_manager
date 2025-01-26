@@ -395,7 +395,7 @@ def generate_reports(users, args):
     else:
         user_overview = "user_overview.txt"
     with open(user_overview, "w+") as file:
-        user_found = False  # Flag to check if tasks.txt is empty
+        user_found = False  # Flag to check if args.tasks is empty
 
         file.write(f"{'—' * 79}\n")
         file.write(f"Total users: {len(users)}\n")
