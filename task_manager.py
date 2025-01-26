@@ -395,7 +395,7 @@ def generate_reports(users, args):
     else:
         user_overview = "user_overview.txt"
     with open(user_overview, "w+") as file:
-        user_found = False  # Flag to check if tasks.txt is empty
+        user_found = False  # Flag to check if args.tasks is empty
 
         file.write(f"{'—' * 79}\n")
         file.write(f"Total users: {len(users)}\n")
@@ -461,9 +461,8 @@ def display_stats(users, args):
     else:
         task_overview = "task_overview.txt"
 
-    if not os.path.exists(task_overview):
-        generate_reports(users, args)
-        print()  # Make console output more readable
+    generate_reports(users, args)
+    print()  # Make console output more readable
     
     with open(task_overview, 'r') as file:
         for line in file:
