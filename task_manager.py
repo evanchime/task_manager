@@ -461,9 +461,8 @@ def display_stats(users, args):
     else:
         task_overview = "task_overview.txt"
 
-    if not os.path.exists(task_overview):
-        generate_reports(users, args)
-        print()  # Make console output more readable
+    generate_reports(users, args)
+    print()  # Make console output more readable
     
     with open(task_overview, 'r') as file:
         for line in file:
