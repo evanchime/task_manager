@@ -142,16 +142,10 @@ def view_all(args):
     with open(args.tasks, "r") as file:
         task_found = False  # Handle case of no task found
 
-        # for line in file:
-        #     task_found = True
-        #     line = line.split(", ")
-        #     print_task(line)  #  Print in a user-friendly manner
         reader = csv.reader(file, delimiter=',', quotechar="'")
         for record in reader:
             task_found = True
             print_task(record)  #  Print in a user-friendly manner
-
-
 
         if task_found:
             print("—" * 79)
@@ -188,15 +182,6 @@ def view_mine(username, users, args):
     with open(args.tasks, "r") as file:
         username_found = False  # Handle if no task assigned to user
 
-        # for line in file:
-        #     tasks.append(line)
-        #     line = line.split(", ")
-        #     if line[0] == username:
-        #         username_found = True
-
-        #         # Print in a user-friendly manner, with task ID
-        #         print_task(line, len(tasks))
-
         reader = csv.reader(file, delimiter=',', quotechar="'")
         for record in reader:
             # Convert record to string, before appending to tasks 
@@ -226,7 +211,6 @@ return to the main menu: "
             and int(task_id) <= len(tasks)
         ):
             task = tasks[int(task_id) - 1] #  Task the user will edit
-            # task = task.strip("\n").split(", ")
             if task[5] == "Yes":  #  Check if the task is completed
                 print("\nYou can't edit a completed task")
             else:
@@ -306,16 +290,9 @@ or 'edit'"
 
                 task = ",".join(task)
 
-                # if int(task_id) != len(tasks):
-                #     # Add '\n' if task is not the last task in tasks.txt
-                #     task += "\n"
-
                 # Write the updated task to args.tasks
                 if tasks[int(task_id) - 1]  != task: 
                     tasks[int(task_id) - 1] = task
-                    # Process tasks to write to file
-                    # tasks = [(', ').join(task) for task in tasks]
-                    # tasks = ('\n').join(tasks)
                     with open(args.tasks, "w") as file:
                         # Join the list of tasks into a single string, 
                         # with each task on a new line and write to file
@@ -371,23 +348,6 @@ def generate_reports(users, args):
     if not args.tasks or not os.path.exists(args.tasks): 
         sys.exit("Please provide a valid tasks file")
     with open(args.tasks, "r") as file:
-        # for line in file:
-        #     total_tasks += 1
-        #     line = line.strip("\n").split(", ")
-        #     users_stat[line[0]][0] += 1  #  Tasks assigned to user
-
-        #     if line[-1] == "Yes":
-        #         total_completed += 1
-        #         users_stat[line[0]][1] += 1  # Tasks completed by user
-        #     elif line[-1] == "No":
-        #         total_uncompleted += 1
-        #         users_stat[line[0]][2] += 1 #  Tasks uncompleted by user
-        #     if (
-        #         line[-1] == "No" 
-        #         and line[-2] < datetime.now().strftime("%d %b %Y")
-        #     ):
-        #         total_overdue += 1
-        #         users_stat[line[0]][3] += 1  #  Tasks overdue per user
         reader = csv.reader(file, delimiter=',', quotechar="'")
         for line in reader:
             total_tasks += 1
@@ -555,10 +515,6 @@ def main():
     args = parse_cli_args()
     users = {}
     if args.users:
-    #     with open(args.users, "r") as file:
-    #         for line in file:
-    #             line = line.strip("\n").split(", ")
-    #             users[line[0]] = line[1]
         with open(args.users, "r") as file:
             reader = csv.reader(file, delimiter=',', quotechar="'")
             for record in reader:
