@@ -38,20 +38,37 @@ def reg_user(users, args):
             otherwise present a relevant message
     """
     print("Welcome to the registration process!\n")
-    new_username = input("Enter a new username: ").lower()
+    # You can only enter an invalid username 3 times
+    count_username_entered = 0  
+    new_username = get_username()
     while new_username in users:
-        print("Username already exists")
-        new_username = input("Enter a new username: ").lower()
-    password = getpass.getpass("Enter password: ")
+        count_username_entered += 1
+        if count_username_entered == 3:
+            raise ValueError(
+                "Aborting...you have entered a username "
+                "that already exists 3 times"
+            )
+        else:
+            print("Username already exists")
+            new_username = get_username()
+    password = get_password()
     password_confirmation = getpass.getpass(
         "Enter password again to confirm: "
     )
+    # You can only enter an invalid password 3 times
+    count_password_entered = 0  
     while password != password_confirmation:
-        print("Passwords don't match")
-        password = getpass.getpass("Enter password: ")
-        password_confirmation = getpass.getpass(
-            "Enter password again to confirm: "
-        )
+        count_password_entered += 1
+        if count_password_entered == 3:
+            raise ValueError(
+                "Aborting...you have entered a mismatch password 3 times"
+            )
+        else:
+            print("Passwords don't match")
+            password = get_password()
+            password_confirmation = getpass.getpass(
+                "Enter password again to confirm: "
+            )
 
     with open(args.users, "a") as file:
         file.write(f"\n{new_username}, {password}")
@@ -226,16 +243,18 @@ edit the task? Type 'complete' or 'edit': "
 'yes' or 'no': "
                     ).lower()
                     if change_username == "yes":
-                        new_username = input(
-                            "\nEnter the new username: "
-                        ).lower()
+                        # new_username = input(
+                        #     "\nEnter the new username: "
+                        # ).lower()
+                        new_username = get_username()
 
                         # Ask the user to enter new username that exists
                         while new_username not in users:
                             print("\nUsername doesn't exist")
-                            new_username = input(
-                                "\nEnter the new username: "
-                            ).lower()
+                            # new_username = input(
+                            #     "\nEnter the new username: "
+                            # ).lower()
+                            new_username = get_username()
                         task[0] = new_username
                     elif change_username != "no":
                         print(
@@ -503,6 +522,68 @@ def parse_cli_args():
     return parser.parse_args()
 
 
+# Function to validate username
+def validate_username(username):
+    pattern = re.compile(
+        r'^(?!.*[-_]{2})[A-Za-z0-9](?!.*[-_]$)[A-Za-z0-9-_]{2,14}[A-Za-z0-9]$'
+    )
+    return pattern.fullmatch(username) is not None
+
+
+# Function to get a valid username
+def get_username():
+    count = 0
+    username = input("Enter a username: ").lower()
+    while not validate_username(username):
+        count += 1
+        if count == 3:
+            raise ValueError(
+                "Aborting...you have entered an invalid username 3 times"
+            )
+        else:
+            print(
+                "You've entered an invalid username. Username must be"
+                "between 4 and 16 characters long and can only contain "
+                "letters, numbers, hyphens and underscores. It must start "
+                "and end with a letter or number and not contain two " 
+                "consecutive hyphens or underscores"
+            )
+            username = input("Enter a valid username: ").lower()
+    return username
+
+
+# Function to validate password
+def validate_password(password):
+    '''Example pattern: at least one uppercase letter, one lowercase 
+    letter, one digit, and minimum length of 8
+    '''
+    pattern = re.compile(
+        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$'
+    )
+    return pattern.fullmatch(password) is not None
+
+
+# Function to get a valid password
+def get_password():
+    count = 0
+    password = getpass.getpass("Enter password: ")
+    while not validate_password(password):
+        count += 1
+        if count == 3:
+            raise ValueError(
+                "Aborting...you have entered an invalid password 3 times"
+            )
+        else:
+            print(
+                "You've entered an invalid password. Password must contain "
+                "at least one lowercase letter, at least one uppercase letter, "
+                "at least one digit, at least one special character, and "
+                "minimum of 8 characters"
+            )
+            password = getpass.getpass("Enter a valid password: ")
+    return password
+
+
 # ====Login Section====
 def main():
     """Here you will write code that will allow a user to login.
@@ -521,15 +602,36 @@ def main():
     else:
         sys.exit("Please provide a users file")
 
+    # Invalid username shouldn't be entered more than 3 times
+    count_username_entered = 0
     while True:
-        username = input("Enter a username: ").lower()
-        if username in users:
-            password = getpass.getpass("Enter password: ")
-            while password != users[username]:
-                print("You've entered an invalid password")
-                password = getpass.getpass("Enter a valid password: ")
-            break
-        print("You've entered an invalid username")
+        try:
+            username = get_username()
+            if username in users:
+                # Invalid password shoudn't be entered more than 3 times
+                count_password_entered = 0
+                password = get_password()
+                while password != users[username]:
+                    count_password_entered += 1
+                    if count_password_entered == 3:
+                        sys.exit(
+                            "Aborting...you have entered a "
+                            "mismatch password 3 times"
+                        )
+                    else:
+                        print("Password doesn't match username")
+                        password = get_password()
+                break
+            else:
+                count_username_entered += 1
+                if count_username_entered == 3:
+                    sys.exit(
+                        "Aborting...you have entered an "
+                        "username that doesn't exist 3 times"
+                    )
+                print("You've entered a username that doesn't exist")
+        except ValueError as e:
+            sys.exit(e)
     print("\nYou've successfully logged in")
 
     while True:
@@ -560,11 +662,14 @@ def main():
         print()
 
         if menu == "r":
-            pass
-            reg_user(users, args)  #  Register a new user
-            user_input = input("\nPress enter to return to the main menu: ")
-            if user_input:
+            try:
                 pass
+                reg_user(users, args)  #  Register a new user
+                user_input = input("\nPress enter to return to the main menu: ")
+                if user_input:
+                    pass
+            except ValueError as e:
+                print(f"\n{e}")
 
         elif menu == "a":
             pass
