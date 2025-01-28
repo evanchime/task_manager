@@ -243,17 +243,11 @@ edit the task? Type 'complete' or 'edit': "
 'yes' or 'no': "
                     ).lower()
                     if change_username == "yes":
-                        # new_username = input(
-                        #     "\nEnter the new username: "
-                        # ).lower()
                         new_username = get_username()
 
                         # Ask the user to enter new username that exists
                         while new_username not in users:
                             print("\nUsername doesn't exist")
-                            # new_username = input(
-                            #     "\nEnter the new username: "
-                            # ).lower()
                             new_username = get_username()
                         task[0] = new_username
                     elif change_username != "no":
@@ -686,12 +680,15 @@ def main():
                 pass
 
         elif menu == "vm":
-            pass
-            #  View tasks assigned to the logged in user
-            view_mine(username, users, args) 
-            user_input = input("\nPress enter to return to the main menu: ")
-            if user_input:
+            try:
                 pass
+                #  View tasks assigned to the logged in user
+                view_mine(username, users, args) 
+                user_input = input("\nPress enter to return to the main menu: ")
+                if user_input:
+                    pass
+            except ValueError as e:
+                print(f"\n{e}")
 
         elif menu == "gr":
             pass
