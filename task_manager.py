@@ -70,10 +70,15 @@ def reg_user(users, args):
                 "Enter password again to confirm: "
             )
 
+    users[new_username] = password  #  Update users
+
+    password = (
+        f"'{password}'" if re.fullmatch(r".*,.*", password) 
+        else password
+    )
     with open(args.users, "a") as file:
         file.write(f"\n{new_username}, {password}")
 
-    users[new_username] = password  #  Update users
 
     print("\nUser added successfully")
 
