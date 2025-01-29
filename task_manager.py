@@ -123,11 +123,18 @@ task is assigned to: "
 'dd-mm-yyyy' e.g 20-10-2019: "
         ).strip()
         due_date = re.sub(r" +", "", due_date)
-        while not re.fullmatch(r"\d{1,2}-\d{1,2}-\d{4}", due_date):
-            print("Date you entered is invalid")
+        while (
+            not re.fullmatch(
+                r"\d{1,2}-\d{1,2}-\d{4}", due_date
+            )
+            or datetime.strptime(
+                due_date, "%d-%m-%Y"
+            ) < datetime.now()
+        ):
+            print("Date you entered is invalid or in the past")
             due_date = input(
-                "Enter the due_date of the task in this \
-format 'dd-mm-yyyy' e.g 20-10-2019: "
+                "Enter the due_date of the task in this "
+                "format 'dd-mm-yyyy' e.g 20-10-2019: "
             ).strip()
             due_date = re.sub(r" +", "", due_date)
         due_date = datetime.strptime(due_date, "%d-%m-%Y").strftime("%d %b %Y")
@@ -682,7 +689,7 @@ def main():
         elif menu == "vm":
             try:
                 pass
-                #  View tasks assigned to the logged in user
+                # View tasks assigned to the logged in user
                 view_mine(username, users, args) 
                 user_input = input("\nPress enter to return to the main menu: ")
                 if user_input:
