@@ -77,7 +77,7 @@ def reg_user(users, args):
         else password
     )
     with open(args.users, "a") as file:
-        file.write(f"\n{new_username}, {password}")
+        file.write(f"\n{new_username},{password}")
 
 
     print("\nUser added successfully")
@@ -392,8 +392,15 @@ def generate_reports(users, args):
                 users_stat[line[0]][3] += 1  #  Tasks overdue per user
 
     # Calculate the percentage of uncompleted and overdue tasks
-    percentage_uncompleted = (total_uncompleted / total_tasks) * 100
-    percentage_overdue = (total_overdue / total_tasks) * 100
+    # Check if total_tasks is 0 to avoid division by zero
+    percentage_uncompleted = (
+        0 if total_tasks == 0 
+        else (total_uncompleted / total_tasks) * 100
+    )
+    percentage_overdue = (
+        0 if total_tasks == 0
+        else (total_overdue / total_tasks) * 100
+    )
 
     # Generate a report of the task overview
     if args.task_overview:
@@ -430,17 +437,21 @@ def generate_reports(users, args):
             user_found = True
             total_tasks_per_user = users_stat[key][0]
             percentage_of_tasks_per_user = (
-                users_stat[key][0] / total_tasks
-            ) * 100
+                0 if total_tasks == 0
+                else (users_stat[key][0] / total_tasks) * 100
+            )
             percentage_of_completed_tasks_per_user = (
-                users_stat[key][1] / total_tasks_per_user
-            ) * 100
+                0 if total_tasks_per_user == 0
+                else (users_stat[key][1] / total_tasks_per_user) * 100
+            )
             percentage_of_uncompleted_tasks_per_user = (
-                users_stat[key][2] / total_tasks_per_user
-            ) * 100
+                0 if total_tasks_per_user == 0
+                else (users_stat[key][2] / total_tasks_per_user) * 100
+            )
             percentage_of_overdue_tasks_per_user = (
-                users_stat[key][3] / total_tasks_per_user
-            ) * 100
+                0 if total_tasks_per_user == 0
+                else (users_stat[key][3] / total_tasks_per_user) * 100
+            )
 
             file.write(f"{'—' * 79}\n")
             file.write(f"User:{' '*28}{key}\n")
