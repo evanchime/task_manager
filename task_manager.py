@@ -436,18 +436,25 @@ def generate_reports(users, args):
         for key in users_stat.keys():
             user_found = True
             total_tasks_per_user = users_stat[key][0]
+            # Check if total_tasks is 0 to avoid division by zero
             percentage_of_tasks_per_user = (
                 0 if total_tasks == 0
                 else (users_stat[key][0] / total_tasks) * 100
             )
+            # Check if total_tasks_per_user is 0 to avoid 
+            # division by zero
             percentage_of_completed_tasks_per_user = (
                 0 if total_tasks_per_user == 0
                 else (users_stat[key][1] / total_tasks_per_user) * 100
             )
+            # Check if total_tasks_per_user is 0 to avoid 
+            # division by zero
             percentage_of_uncompleted_tasks_per_user = (
                 0 if total_tasks_per_user == 0
                 else (users_stat[key][2] / total_tasks_per_user) * 100
             )
+            # Check if total_tasks_per_user is 0 to avoid 
+            # division by zero
             percentage_of_overdue_tasks_per_user = (
                 0 if total_tasks_per_user == 0
                 else (users_stat[key][3] / total_tasks_per_user) * 100
